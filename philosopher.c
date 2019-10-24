@@ -49,17 +49,17 @@ void put_fork(int phnum)
 }
 void* philospher(void* num)
 {
-        struct timeval start,end;
+        //struct timeval start,end;
         int i=*((int*)num);
         int j;
-        for(j=0;j<90;j++)
+        for(j=0;j<30;j++)
         {
-                gettimeofday(&start,NULL);
-                sleep(1);
+                //gettimeofday(&start,NULL);
+                //sleep(1);
                 take_fork(i);
-                sleep(0);
+                sleep(4);
                 put_fork(i);
-                gettimeofday(&end,NULL);
+                //gettimeofday(&end,NULL);
         }
         //double t=(double)((end.tv_sec-start.tv_sec)/1000000.0);
         //printf("time : %lf",t);
