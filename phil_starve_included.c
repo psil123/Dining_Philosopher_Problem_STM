@@ -11,17 +11,17 @@ typedef struct
 	int id;
 	long program_starting_time,maximum_sleeping_time;
 	int *total_blocking_time,*block_starting_time;
-	void *v;
-	int philosopher_count;
-	pthread_mutex_t *blocktime_monitor;
+	void *v; //stores philosopher var to be passed to each process
+	int philosopher_count; 
+	pthread_mutex_t *blocktime_monitor; 
 } philosopher_structure;
 
 typedef struct
 {
 	int *state;
 	int philosopher_count;
-	pthread_mutex_t *monitor;
-	pthread_cond_t **checker;	
+	pthread_mutex_t *monitor;//general mutex for CS
+	pthread_cond_t **checker;//mutex for each fork	
 } philosopher;
 
 
@@ -84,7 +84,9 @@ void *initialize_v(int philosopher_count)
 		perror("malloc");
 		exit(1); 
 	}
+	//initialize mutex
   	pthread_mutex_init(pp->monitor, NULL);
+	//initialize onditional variables
   	for(i=0;i<philosopher_count;i++) 
 	{
     		pp->checker[i]=(pthread_cond_t*)malloc(sizeof(pthread_cond_t));
@@ -121,7 +123,7 @@ void *philosopher(void *v)
     		pthread_mutex_unlock(ps->blocktime_monitor);
 
     		take_fork(ps);
-
+		//calculate block time
     		pthread_mutex_lock(ps->blocktime_monitor);
     		ps->total_blocking_time[ps->id] += (time(0) - t);
     		ps->block_starting_time[ps->id] = -1;
@@ -141,14 +143,14 @@ void *philosopher(void *v)
 
 int main(int argc,char **argv)
 {
-	pthread_t *threads;
+	pthread_t *threads;//store all threads
 	philosopher_structure *ps;
 	int i;
 	void *v;
 	long program_starting_time,t_temp1,t_temp2;
 	int *total_blocking_time,*block_starting_time;
 	int philosopher_count;
-	pthread_mutex_t *blocktime_monitor;
+	pthread_mutex_t *blocktime_monitor;//mutex to block all process while calc and printing block_time
 	char s[500];
 	int total;
 	char *current;
@@ -181,13 +183,13 @@ int main(int argc,char **argv)
   	total_blocking_time=(int*)malloc(philosopher_count*sizeof(int));
   	if(total_blocking_time==NULL) 
 	{ 
-		perror("malloc total_blocking_time"); 
+		perror("malloc total_blocking_time not defined"); 
 		exit(1); 
 	}
   	block_starting_time=(int*)malloc(philosopher_count*sizeof(int));
   	if(block_starting_time==NULL) 
 	{ 
-		perror("malloc block_starting_time"); 
+		perror("malloc block_starting_time not defined"); 
 		exit(1); 
 	}
 
@@ -198,7 +200,7 @@ int main(int argc,char **argv)
 		total_blocking_time[i]=0;
     		block_starting_time[i]=-1;
   	}
-	
+	//initialize philosophers
 	for (i=0;i<philosopher_count;i++) 
 	{
     		ps[i].id = i;
@@ -211,7 +213,7 @@ int main(int argc,char **argv)
     		ps[i].philosopher_count=philosopher_count;
     		pthread_create(threads+i,NULL,philosopher,(void *)(ps+i));
   	}
-
+	//calculating blocktime
 	while(1) 
 	{
     		pthread_mutex_lock(blocktime_monitor);
