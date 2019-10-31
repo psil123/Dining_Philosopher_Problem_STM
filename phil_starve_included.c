@@ -5,7 +5,7 @@
 #define THINKING 0
 #define HUNGRY 1
 #define EATING 2
-
+//stores control info for each philosopher
 typedef struct 
 {
 	int id;
@@ -15,7 +15,7 @@ typedef struct
 	int philosopher_count; 
 	pthread_mutex_t *blocktime_monitor; 
 } philosopher_structure;
-
+//stores all control info for all philosophers
 typedef struct
 {
 	int *state;
@@ -59,7 +59,7 @@ void put_fork(philosopher_structure *ps)
   	}
   	if(pp->state[(ps->id+1)%philosopher_count]==HUNGRY) 
 	{
-    		pthread_cond_signal(pp->checker[(ps->id+1)%philosopher_count]);
+    		pthread_cond_signal(	pp->checker[(ps->id+1)%philosopher_count]);
   	}
   	pthread_mutex_unlock(pp->monitor);
 }
