@@ -1,2 +1,2 @@
 # Philosopher
-Philosopher using STM
+Solution to the Dining Philosophers Problem using STM
